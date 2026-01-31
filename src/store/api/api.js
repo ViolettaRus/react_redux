@@ -1,14 +1,15 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { createApi } from '@reduxjs/toolkit/query/react'
+import contactsData from '../../../contact.json'
+import groupsData from '../../../groups.json'
 
 export const api = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: '/' }),
   endpoints: (builder) => ({
     getContacts: builder.query({
-      query: () => 'contact.json',
+      queryFn: () => ({ data: contactsData }),
     }),
     getGroups: builder.query({
-      query: () => 'groups.json',
+      queryFn: () => ({ data: groupsData }),
     }),
   }),
 })
