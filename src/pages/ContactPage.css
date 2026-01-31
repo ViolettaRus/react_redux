@@ -97,6 +97,27 @@
   text-decoration: none;
 }
 
+.detail-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.detail-groups a.group-badge-large {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  color: white;
+  font-weight: 500;
+  text-decoration: none;
+  background: #667eea;
+  transition: background 0.2s;
+}
+
+.detail-groups a.group-badge-large:hover {
+  background: #764ba2;
+}
+
 .group-badge-large {
   display: inline-block;
   padding: 0.5rem 1rem;

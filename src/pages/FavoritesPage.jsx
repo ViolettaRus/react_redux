@@ -1,15 +1,19 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { removeFromFavorites } from '../store/actions/favoritesActions'
+import { useGetContactsQuery, useGetGroupsQuery } from '../store/api/api'
+import { removeFromFavorites } from '../store/favoritesSlice'
 import './FavoritesPage.css'
 
 const FavoritesPage = () => {
   const dispatch = useDispatch()
-  const { items: contacts } = useSelector(state => state.contacts)
-  const { items: groups } = useSelector(state => state.groups)
-  const { contactIds: favoriteIds } = useSelector(state => state.favorites)
+  const { data: contacts = [] } = useGetContactsQuery()
+  const { data: groups = [] } = useGetGroupsQuery()
+  const { contactIds: favoriteIds } = useSelector((state) => state.favorites)
 
-  const favoriteContacts = contacts.filter(c => favoriteIds.includes(c.id))
+  const favoriteContacts = contacts.filter((c) => favoriteIds.includes(c.id))
+
+  const getContactGroups = (contactId) =>
+    groups.filter((g) => g.contactIds?.includes(contactId))
 
   const handleRemoveFavorite = (contactId) => {
     dispatch(removeFromFavorites(contactId))
@@ -18,16 +22,20 @@ const FavoritesPage = () => {
   return (
     <div className="favorites-page">
       <h2>Избранные контакты</h2>
-      
+
       {favoriteContacts.length > 0 ? (
         <div className="contacts-grid">
-          {favoriteContacts.map(contact => {
-            const group = groups.find(g => g.id === contact.groupId)
-            
+          {favoriteContacts.map((contact) => {
+            const contactGroups = getContactGroups(contact.id)
+
             return (
               <div key={contact.id} className="contact-card">
                 <div className="contact-header">
-                  <img src={contact.avatar} alt={contact.name} className="contact-avatar" />
+                  <img
+                    src={contact.photo}
+                    alt={contact.name}
+                    className="contact-avatar"
+                  />
                   <button
                     className="favorite-btn active"
                     onClick={() => handleRemoveFavorite(contact.id)}
@@ -42,16 +50,21 @@ const FavoritesPage = () => {
                   </Link>
                 </h3>
                 <p className="contact-phone">{contact.phone}</p>
-                <p className="contact-email">{contact.email}</p>
-                {group && (
-                  <Link to={`/group/${group.id}`} className="contact-group">
-                    <span
-                      className="group-badge"
-                      style={{ backgroundColor: group.color }}
-                    >
-                      {group.name}
-                    </span>
-                  </Link>
+                {contact.address && (
+                  <p className="contact-address">{contact.address}</p>
+                )}
+                {contactGroups.length > 0 && (
+                  <div className="contact-groups">
+                    {contactGroups.map((group) => (
+                      <Link
+                        key={group.id}
+                        to={`/group/${group.id}`}
+                        className="contact-group"
+                      >
+                        <span className="group-badge">{group.name}</span>
+                      </Link>
+                    ))}
+                  </div>
                 )}
               </div>
             )

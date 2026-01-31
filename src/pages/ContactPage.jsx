@@ -1,24 +1,27 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams, Link } from 'react-router-dom'
-import { addToFavorites, removeFromFavorites } from '../store/actions/favoritesActions'
+import { useGetContactsQuery, useGetGroupsQuery } from '../store/api/api'
+import { addToFavorites, removeFromFavorites } from '../store/favoritesSlice'
 import './ContactPage.css'
 
 const ContactPage = () => {
   const { id } = useParams()
   const dispatch = useDispatch()
-  const { items: contacts } = useSelector(state => state.contacts)
-  const { items: groups } = useSelector(state => state.groups)
-  const { contactIds: favoriteIds } = useSelector(state => state.favorites)
+  const { data: contacts = [] } = useGetContactsQuery()
+  const { data: groups = [] } = useGetGroupsQuery()
+  const { contactIds: favoriteIds } = useSelector((state) => state.favorites)
 
-  const contact = contacts.find(c => c.id === parseInt(id))
-  const group = contact ? groups.find(g => g.id === contact.groupId) : null
-  const isFavorite = favoriteIds.includes(parseInt(id))
+  const contact = contacts.find((c) => c.id === id)
+  const contactGroups = contact
+    ? groups.filter((g) => g.contactIds?.includes(contact.id))
+    : []
+  const isFavorite = favoriteIds.includes(id)
 
   const toggleFavorite = () => {
     if (isFavorite) {
-      dispatch(removeFromFavorites(parseInt(id)))
+      dispatch(removeFromFavorites(id))
     } else {
-      dispatch(addToFavorites(parseInt(id)))
+      dispatch(addToFavorites(id))
     }
   }
 
@@ -26,18 +29,26 @@ const ContactPage = () => {
     return (
       <div className="contact-page">
         <div className="error">Контакт не найден</div>
-        <Link to="/" className="back-link">← Вернуться к списку контактов</Link>
+        <Link to="/" className="back-link">
+          ← Вернуться к списку контактов
+        </Link>
       </div>
     )
   }
 
   return (
     <div className="contact-page">
-      <Link to="/" className="back-link">← Вернуться к списку контактов</Link>
-      
+      <Link to="/" className="back-link">
+        ← Вернуться к списку контактов
+      </Link>
+
       <div className="contact-detail">
         <div className="contact-detail-header">
-          <img src={contact.avatar} alt={contact.name} className="contact-detail-avatar" />
+          <img
+            src={contact.photo}
+            alt={contact.name}
+            className="contact-detail-avatar"
+          />
           <div className="contact-detail-info">
             <h2>{contact.name}</h2>
             <button
@@ -54,21 +65,32 @@ const ContactPage = () => {
             <span className="detail-label">Телефон:</span>
             <span className="detail-value">{contact.phone}</span>
           </div>
-          <div className="detail-item">
-            <span className="detail-label">Email:</span>
-            <span className="detail-value">{contact.email}</span>
-          </div>
-          {group && (
+          {contact.address && (
             <div className="detail-item">
-              <span className="detail-label">Группа:</span>
-              <Link to={`/group/${group.id}`} className="detail-value">
-                <span
-                  className="group-badge-large"
-                  style={{ backgroundColor: group.color }}
-                >
-                  {group.name}
-                </span>
-              </Link>
+              <span className="detail-label">Адрес:</span>
+              <span className="detail-value">{contact.address}</span>
+            </div>
+          )}
+          {contact.birthday && (
+            <div className="detail-item">
+              <span className="detail-label">День рождения:</span>
+              <span className="detail-value">{contact.birthday}</span>
+            </div>
+          )}
+          {contactGroups.length > 0 && (
+            <div className="detail-item">
+              <span className="detail-label">Группы:</span>
+              <div className="detail-groups">
+                {contactGroups.map((group) => (
+                  <Link
+                    key={group.id}
+                    to={`/group/${group.id}`}
+                    className="group-badge-large"
+                  >
+                    {group.name}
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
         </div>

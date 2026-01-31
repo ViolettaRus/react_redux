@@ -1,21 +1,16 @@
-import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { fetchContacts, setContactsFilter } from '../store/actions/contactsActions'
-import { addToFavorites, removeFromFavorites } from '../store/actions/favoritesActions'
+import { useGetContactsQuery, useGetGroupsQuery } from '../store/api/api'
+import { addToFavorites, removeFromFavorites } from '../store/favoritesSlice'
+import { setContactsFilter } from '../store/contactsFilterSlice'
 import './ContactsPage.css'
 
 const ContactsPage = () => {
   const dispatch = useDispatch()
-  const { items: contacts, loading, error, filter } = useSelector(state => state.contacts)
-  const { items: groups } = useSelector(state => state.groups)
-  const { contactIds: favoriteIds } = useSelector(state => state.favorites)
-
-  useEffect(() => {
-    if (contacts.length === 0) {
-      dispatch(fetchContacts())
-    }
-  }, [dispatch, contacts.length])
+  const { data: contacts = [], isLoading, error } = useGetContactsQuery()
+  const { data: groups = [] } = useGetGroupsQuery()
+  const { contactIds: favoriteIds } = useSelector((state) => state.favorites)
+  const filter = useSelector((state) => state.contactsFilter)
 
   const handleFilterChange = (field, value) => {
     dispatch(setContactsFilter({ [field]: value }))
@@ -29,24 +24,29 @@ const ContactsPage = () => {
     }
   }
 
-  const filteredContacts = contacts.filter(contact => {
+  const filteredContacts = contacts.filter((contact) => {
     const matchesName = contact.name.toLowerCase().includes(filter.name.toLowerCase())
-    const matchesGroup = !filter.groupId || contact.groupId === parseInt(filter.groupId)
+    const matchesGroup = !filter.groupId || groups.some(
+      (g) => g.id === filter.groupId && g.contactIds?.includes(contact.id)
+    )
     return matchesName && matchesGroup
   })
 
-  if (loading) {
+  const getContactGroups = (contactId) =>
+    groups.filter((g) => g.contactIds?.includes(contactId))
+
+  if (isLoading) {
     return <div className="loading">Загрузка контактов...</div>
   }
 
   if (error) {
-    return <div className="error">Ошибка: {error}</div>
+    return <div className="error">Ошибка: {error.message}</div>
   }
 
   return (
     <div className="contacts-page">
       <h2>Все контакты</h2>
-      
+
       <div className="filters">
         <input
           type="text"
@@ -57,11 +57,13 @@ const ContactsPage = () => {
         />
         <select
           value={filter.groupId || ''}
-          onChange={(e) => handleFilterChange('groupId', e.target.value || null)}
+          onChange={(e) =>
+            handleFilterChange('groupId', e.target.value || null)
+          }
           className="filter-select"
         >
           <option value="">Все группы</option>
-          {groups.map(group => (
+          {groups.map((group) => (
             <option key={group.id} value={group.id}>
               {group.name}
             </option>
@@ -70,18 +72,26 @@ const ContactsPage = () => {
       </div>
 
       <div className="contacts-grid">
-        {filteredContacts.map(contact => {
-          const group = groups.find(g => g.id === contact.groupId)
+        {filteredContacts.map((contact) => {
+          const contactGroups = getContactGroups(contact.id)
           const isFavorite = favoriteIds.includes(contact.id)
-          
+
           return (
             <div key={contact.id} className="contact-card">
               <div className="contact-header">
-                <img src={contact.avatar} alt={contact.name} className="contact-avatar" />
+                <img
+                  src={contact.photo}
+                  alt={contact.name}
+                  className="contact-avatar"
+                />
                 <button
                   className={`favorite-btn ${isFavorite ? 'active' : ''}`}
                   onClick={() => toggleFavorite(contact.id)}
-                  title={isFavorite ? 'Удалить из избранного' : 'Добавить в избранное'}
+                  title={
+                    isFavorite
+                      ? 'Удалить из избранного'
+                      : 'Добавить в избранное'
+                  }
                 >
                   {isFavorite ? '★' : '☆'}
                 </button>
@@ -92,16 +102,21 @@ const ContactsPage = () => {
                 </Link>
               </h3>
               <p className="contact-phone">{contact.phone}</p>
-              <p className="contact-email">{contact.email}</p>
-              {group && (
-                <Link to={`/group/${group.id}`} className="contact-group">
-                  <span
-                    className="group-badge"
-                    style={{ backgroundColor: group.color }}
-                  >
-                    {group.name}
-                  </span>
-                </Link>
+              {contact.address && (
+                <p className="contact-address">{contact.address}</p>
+              )}
+              {contactGroups.length > 0 && (
+                <div className="contact-groups">
+                  {contactGroups.map((group) => (
+                    <Link
+                      key={group.id}
+                      to={`/group/${group.id}`}
+                      className="contact-group"
+                    >
+                      <span className="group-badge">{group.name}</span>
+                    </Link>
+                  ))}
+                </div>
               )}
             </div>
           )

@@ -1,15 +1,16 @@
-import { createStore, combineReducers, applyMiddleware } from 'redux'
-import thunk from 'redux-thunk'
-import contactsReducer from './reducers/contactsReducer'
-import groupsReducer from './reducers/groupsReducer'
-import favoritesReducer from './reducers/favoritesReducer'
+import { configureStore } from '@reduxjs/toolkit'
+import { api } from './api/api'
+import favoritesReducer from './favoritesSlice'
+import contactsFilterReducer from './contactsFilterSlice'
 
-const rootReducer = combineReducers({
-  contacts: contactsReducer,
-  groups: groupsReducer,
-  favorites: favoritesReducer,
+export const store = configureStore({
+  reducer: {
+    [api.reducerPath]: api.reducer,
+    favorites: favoritesReducer,
+    contactsFilter: contactsFilterReducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(api.middleware),
 })
-
-export const store = createStore(rootReducer, applyMiddleware(thunk))
 
 export default store

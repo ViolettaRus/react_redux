@@ -1,45 +1,50 @@
-import { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { fetchGroups } from '../store/actions/groupsActions'
+import { useGetContactsQuery, useGetGroupsQuery } from '../store/api/api'
 import './GroupsPage.css'
 
-const GroupsPage = () => {
-  const dispatch = useDispatch()
-  const { items: groups, loading, error } = useSelector(state => state.groups)
-  const { items: contacts } = useSelector(state => state.contacts)
+const getGroupColor = (id) => {
+  const colors = [
+    '#FF6B6B',
+    '#4ECDC4',
+    '#95E1D3',
+    '#F38181',
+    '#AA96DA',
+    '#FCBAD3',
+  ]
+  const index = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
+  return colors[index % colors.length]
+}
 
-  useEffect(() => {
-    if (groups.length === 0) {
-      dispatch(fetchGroups())
-    }
-  }, [dispatch, groups.length])
+const GroupsPage = () => {
+  const { data: groups = [], isLoading, error } = useGetGroupsQuery()
 
   const getGroupContactsCount = (groupId) => {
-    return contacts.filter(c => c.groupId === groupId).length
+    const group = groups.find((g) => g.id === groupId)
+    return group?.contactIds?.length ?? 0
   }
 
-  if (loading) {
+  if (isLoading) {
     return <div className="loading">Загрузка групп...</div>
   }
 
   if (error) {
-    return <div className="error">Ошибка: {error}</div>
+    return <div className="error">Ошибка: {error.message}</div>
   }
 
   return (
     <div className="groups-page">
       <h2>Все группы</h2>
-      
+
       <div className="groups-grid">
-        {groups.map(group => {
+        {groups.map((group) => {
           const contactsCount = getGroupContactsCount(group.id)
-          
+          const color = getGroupColor(group.id)
+
           return (
             <Link key={group.id} to={`/group/${group.id}`} className="group-card">
               <div
                 className="group-color-bar"
-                style={{ backgroundColor: group.color }}
+                style={{ backgroundColor: color }}
               />
               <div className="group-content">
                 <h3>{group.name}</h3>

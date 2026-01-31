@@ -104,10 +104,18 @@
 }
 
 .contact-phone,
-.contact-email {
+.contact-email,
+.contact-address {
   margin: 0.5rem 0;
   color: #666;
   font-size: 0.9rem;
+}
+
+.contact-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .contact-group {
@@ -123,6 +131,7 @@
   color: white;
   font-size: 0.85rem;
   font-weight: 500;
+  background: #667eea;
 }
 
 .loading,
