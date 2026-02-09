@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { fetchGroups } from '../store/actions/groupsActions'
+import { fetchGroups } from '../../store/actions/groupsActions'
 import './GroupsPage.css'
 
 const GroupsPage = () => {

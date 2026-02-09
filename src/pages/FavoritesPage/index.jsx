@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { removeFromFavorites } from '../store/actions/favoritesActions'
+import { removeFromFavorites } from '../../store/actions/favoritesActions'
 import './FavoritesPage.css'
 
 const FavoritesPage = () => {

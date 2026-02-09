@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { fetchContacts, setContactsFilter } from '../store/actions/contactsActions'
-import { addToFavorites, removeFromFavorites } from '../store/actions/favoritesActions'
+import { fetchContacts, setContactsFilter } from '../../store/actions/contactsActions'
+import { addToFavorites, removeFromFavorites } from '../../store/actions/favoritesActions'
 import './ContactsPage.css'
 
 const ContactsPage = () => {

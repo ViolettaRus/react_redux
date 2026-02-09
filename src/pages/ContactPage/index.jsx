@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams, Link } from 'react-router-dom'
-import { addToFavorites, removeFromFavorites } from '../store/actions/favoritesActions'
+import { addToFavorites, removeFromFavorites } from '../../store/actions/favoritesActions'
 import './ContactPage.css'
 
 const ContactPage = () => {
