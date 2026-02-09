@@ -1,16 +1,16 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { api } from './api/api'
-import favoritesReducer from './favoritesSlice'
-import contactsFilterReducer from './contactsFilterSlice'
+import { contactsApi } from './contacts/api'
+import contactsFilterReducer from './contacts/slice'
+import favoritesReducer from './favorites/slice'
 
 export const store = configureStore({
   reducer: {
-    [api.reducerPath]: api.reducer,
-    favorites: favoritesReducer,
+    [contactsApi.reducerPath]: contactsApi.reducer,
     contactsFilter: contactsFilterReducer,
+    favorites: favoritesReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(api.middleware),
+    getDefaultMiddleware().concat(contactsApi.middleware),
 })
 
 export default store

@@ -2,8 +2,8 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 import contactsData from '../../../contact.json'
 import groupsData from '../../../groups.json'
 
-export const api = createApi({
-  reducerPath: 'api',
+export const contactsApi = createApi({
+  reducerPath: 'contactsApi',
   endpoints: (builder) => ({
     getContacts: builder.query({
       queryFn: () => ({ data: contactsData }),
@@ -14,4 +14,4 @@ export const api = createApi({
   }),
 })
 
-export const { useGetContactsQuery, useGetGroupsQuery } = api
+export const { useGetContactsQuery, useGetGroupsQuery } = contactsApi
