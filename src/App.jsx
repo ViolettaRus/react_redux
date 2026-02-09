@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
-import ContactsPage from './pages/ContactsPage'
-import ContactPage from './pages/ContactPage'
-import GroupsPage from './pages/GroupsPage'
-import GroupPage from './pages/GroupPage'
-import FavoritesPage from './pages/FavoritesPage'
+import ContactsPage from './pages/ContactsPage/ContactsPage'
+import ContactPage from './pages/ContactPage/ContactPage'
+import GroupsPage from './pages/GroupsPage/GroupsPage'
+import GroupPage from './pages/GroupPage/GroupPage'
+import FavoritesPage from './pages/FavoritesPage/FavoritesPage'
 import './App.css'
 
 function App() {

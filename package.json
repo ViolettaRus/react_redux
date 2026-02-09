@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Contacts application with Redux state management",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
     "react": "^18.2.0",

@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams, Link } from 'react-router-dom'
-import { useGetContactsQuery, useGetGroupsQuery } from '../store/contacts/api'
-import { addToFavorites, removeFromFavorites } from '../store/favorites/slice'
+import { useGetContactsQuery, useGetGroupsQuery } from '../../store/contacts/api'
+import { addToFavorites, removeFromFavorites } from '../../store/favorites/slice'
 import './ContactPage.css'
 
 const ContactPage = () => {

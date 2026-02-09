@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
-import { useGetContactsQuery, useGetGroupsQuery } from '../store/contacts/api'
+import { useGetContactsQuery, useGetGroupsQuery } from '../../store/contacts/api'
 import './GroupPage.css'
 
 const getGroupColor = (id) => {
